@@ -135,6 +135,26 @@ from werkzeug.security import generate_password_hash
 
 @app.route("/driver_registration_action", methods=['POST'])
 def driver_registration_action():
+    username = request.form['username']
+    email = request.form['email']
+    password = request.form['password']
+    phone = request.form['phone']
+    vehicle_type = request.form['vehicle_type']
+    vehicle_number = request.form['vehicle_number']
+    import bcrypt
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password = hashed.decode('utf-8')
+    driver = {
+        'username': username,
+        'email': email,
+        'password': hashed_password,
+        'phone': phone,
+        'vehicle_type': vehicle_type,
+        'vehicle_number': vehicle_number,
+        'status': 'inactive'
+    }
+    db.drivers.insert_one(driver)
+    return render_template('driver_registration_action.html')
     # Get the form data
     first_name = request.form.get("first_name")
     last_name = request.form.get("last_name")
