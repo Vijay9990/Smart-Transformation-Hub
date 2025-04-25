@@ -211,8 +211,9 @@ def driver_login_action():
 
     driver = driver_collection.find_one({"email": email})
     if driver:
-        import bcrypt
-        if bcrypt.checkpw(password.encode('utf-8'), driver["password"].encode('utf-8')):
+from passlib.context import CryptContext
+pwd_context = CryptContext(schemes=['scrypt'], deprecated='auto')
+        if driver and pwd_context.verify(password, driver['password']):
             if driver["status"] == "UnAuthorized":
                 return render_template("message.html", message="Your Account Not Verified")
             else:
